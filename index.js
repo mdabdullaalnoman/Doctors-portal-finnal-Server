@@ -22,11 +22,31 @@ async function run() {
     // Connect the client to the server
     await client.connect();
 
-    // const database = client.db("express_food_delivery");
-    // const foodCollection = database.collection("foods");
-    // const purchesFoodCollection = database.collection("purchesFood");
-console.log('database conected');
-   
+    const database = client.db("doctors_portal");
+    const appointmentCollection = database.collection("appoinments");
+
+    // post a appointment form body----------------------------
+    app.post('/appoinments', async (req, res) => {
+      const bookingData = req.body;
+      const result = await appointmentCollection.insertOne(bookingData);
+      console.log(bookingData);
+      res.json(result);
+      console.log(result);
+    });
+
+    // get appointment by email ------------------------------------
+    app.get('/appoinments', async (req, res) => {
+      const email = req.query.email;
+      const date = new Date(req.query.date).toLocaleDateString();
+      const query = { patentEmail: email, date: date };
+      const cursor = appointmentCollection.find(query);
+      const appointment = await cursor.toArray();
+      res.json(appointment);
+    })
+
+
+    console.log('data base connected');
+
 
 
   } finally {
